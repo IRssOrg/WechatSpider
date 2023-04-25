@@ -4,6 +4,7 @@ import json
 import re
 import random
 import time
+import os
 from bs4 import BeautifulSoup
 
     
@@ -83,12 +84,20 @@ def getpassage(accountName,page):
     print('翻页###################', page)
     query_fakeid_response = requests.get(appmsg_url, cookies=cookies, headers=header, params=query_id_data)
     fakeid_list = query_fakeid_response.json().get('app_msg_list')
+    datalist=[]
     for item in fakeid_list:
         print(item.get('link'))
-        info = '"{}","{}","{}","{}"'.format(str(item["aid"]), item['title'], item['link'], str(item['create_time']))
-        with open(str(accountName) + '_' + str(page) + '.json', 'w', encoding='utf-8')as f:
-            json.dump(info,f,indent=2,sort_keys=True,ensure_ascii=False)
+        aid = item['aid']
+        title = item['title']
+        url = item['link']
+        create_time = item['create_time']
 
+        datas={'aid':aid,'title':title,"url":url,"create_time":create_time}
+        datalist.append(datas)
+        #info = '"{}","{}","{}","{}"'.format(str(item["aid"]), item['title'], item['link'], str(item['create_time']))
+
+    with open(str(accountName) + '_' + str(page) + '.json', 'w', encoding='utf-8') as f:
+        json.dump(datalist, f, indent=2, sort_keys=True, ensure_ascii=False)
     time.sleep(2)
     return f
 #文章爬取，页数从0开始
@@ -140,8 +149,30 @@ def articlespider(accountName):
         begin += 5
         time.sleep(2)
 '''
+
+
 #以上是一次性爬取所有文章的函数
-def getcontent(url):
+def getcontent(url, accountname):
+    i=0
+    title=''
+    id=''
+    author=str(accountname)
+    time=''
+    content=''
+
+    while 1:
+       if not os.path.exists(str(accountname) + '_' + str(i) + '.json'):
+            break
+       with open(str(accountname)+'_'+str(i)+'.json','r',encoding='utf-8') as f:
+            articlelist=json.load(f)
+
+            for item in articlelist:
+                if item['url']==url:
+                    title=item['title']
+                    id=item['aid']
+                    time=item['create_time']
+       i=i+1
+
     headers = {
 
         "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0"
@@ -150,9 +181,15 @@ def getcontent(url):
     if r.status_code == 200:
         text = r.text
         soup = BeautifulSoup(text)
-        print(soup.get_text(strip=True))
+        content += soup.find("meta")['content']
+        content += soup.get_text(strip=True)
+        print(content)
+    with open(str(id)+'.json','w',encoding='utf-8') as f:
+        articledata={'title':title,'author':author,'time':time,'id':id,'content':content}
+        json.dump(articledata, f, indent=2, sort_keys=True, ensure_ascii=False)
+        return f
 
-
+'''
 def requestarticle(accountName):
     headers = {
 
@@ -172,7 +209,7 @@ def requestarticle(accountName):
                 text = r.text
                 soup = BeautifulSoup(text)
                 print(soup.get_text(strip=True))
-
+'''
 
 
 
