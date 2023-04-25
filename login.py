@@ -5,7 +5,7 @@ from pprint import pprint
 
 post = {}
 
-driver = webdriver.Edge(executable_path="E:/edgedriver_win64/msedgedriver.exe")
+driver = webdriver.Edge(executable_path="E:\msedgedriver.exe")
 driver.get('https://mp.weixin.qq.com/')
 time.sleep(2)
 time.sleep(15)
