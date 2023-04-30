@@ -1,5 +1,5 @@
 import requests
-import redis
+from fastapi import FastAPI
 import json
 import re
 import random
@@ -7,7 +7,7 @@ import time
 import os
 from bs4 import BeautifulSoup
 
-    
+wechatCreeper = FastAPI()
 url = 'https://mp.weixin.qq.com'
 header = {
     "HOST": "mp.weixin.qq.com",
@@ -26,7 +26,8 @@ def gettoken():
     return token
 
 
-def searchforfakeid(accountName):
+@wechatCreeper.get('/api/search/author/{username}')
+def searchforfakeid(username):
         query_id = {
             'action': 'search_biz',
             'token': gettoken(),
@@ -34,7 +35,7 @@ def searchforfakeid(accountName):
             'f': 'json',
             'ajax': '1',
             'random': random.random(),
-            'query': accountName,
+            'query': username,
             'begin': '0',
             'count': '5',
         }
@@ -44,10 +45,11 @@ def searchforfakeid(accountName):
         fakeid = lists.get('fakeid')
         if fakeid!='':
             print('找到公众号'+fakeid)
-        return fakeid
+        return{'username': username,'id':fakeid}
 
 # 微信公众号的名称就是id，所以此处只返回id
-def getpassage(accountName,page):
+@wechatCreeper.get('/api/search/author/{username}/{page}')
+def getpassage(username,page):
     query_id_data = {
         'token': gettoken(),
         'lang': 'zh_CN',
@@ -58,7 +60,7 @@ def getpassage(accountName,page):
         'begin': '0',
         'count': '5',
         'query': '',
-        'fakeid': searchforfakeid(accountName),
+        'fakeid': searchforfakeid(username),
         'type': '9'
     }
     appmsg_url = 'https://mp.weixin.qq.com/cgi-bin/appmsg?'
@@ -78,7 +80,7 @@ def getpassage(accountName,page):
         'begin': '{}'.format(str(page*5)),
         'count': '5',
         'query': '',
-        'fakeid': searchforfakeid(accountName),
+        'fakeid': searchforfakeid(username),
         'type': '9'
     }
     print('翻页###################', page)
@@ -96,7 +98,7 @@ def getpassage(accountName,page):
         datalist.append(datas)
         #info = '"{}","{}","{}","{}"'.format(str(item["aid"]), item['title'], item['link'], str(item['create_time']))
 
-    with open(str(accountName) + '_' + str(page) + '.json', 'w', encoding='utf-8') as f:
+    with open(str(username) + '_' + str(page) + '.json', 'w', encoding='utf-8') as f:
         json.dump(datalist, f, indent=2, sort_keys=True, ensure_ascii=False)
     time.sleep(2)
     return f
@@ -150,20 +152,20 @@ def articlespider(accountName):
         time.sleep(2)
 '''
 
-
+@wechatCreeper.get('/api/passage/{username}/{url}')
 #以上是一次性爬取所有文章的函数
-def getcontent(url, accountname):
+def getcontent(url, username):
     i=0
     title=''
     id=''
-    author=str(accountname)
+    author=str(username)
     time=''
     content=''
 
     while 1:
-       if not os.path.exists(str(accountname) + '_' + str(i) + '.json'):
+       if not os.path.exists(str(username) + '_' + str(i) + '.json'):
             break
-       with open(str(accountname)+'_'+str(i)+'.json','r',encoding='utf-8') as f:
+       with open(str(username)+'_'+str(i)+'.json','r',encoding='utf-8') as f:
             articlelist=json.load(f)
 
             for item in articlelist:
