@@ -47,8 +47,8 @@ def searchforfakeid(username):
             print('找到公众号'+fakeid)
         return{'username': username,'id':fakeid}
 
-# 微信公众号的名称就是id，所以此处只返回id
-@wechatCreeper.get('/api/search/author/{username}/{page}')
+
+@wechatCreeper.get('/api/passage/{username}/{page}')
 def getpassage(username,page):
     query_id_data = {
         'token': gettoken(),
@@ -95,7 +95,7 @@ def getpassage(username,page):
         url = item['link']
         create_time = item['create_time']
 
-        datas={'aid':aid,'title':title,"url":url,"create_time":create_time}
+        datas={'aid':aid,'title':title,"url":url,"create_time":create_time,"time_stamp":int(time.time())}
         datalist.append(datas)
         #info = '"{}","{}","{}","{}"'.format(str(item["aid"]), item['title'], item['link'], str(item['create_time']))
 
