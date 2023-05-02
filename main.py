@@ -47,7 +47,8 @@ def searchforfakeid(username):
             print('找到公众号'+fakeid)
         return{'username': username,'id':fakeid}
 
-# 微信公众号的名称就是id，所以此处只返回id
+
+
 @wechatCreeper.get('/api/passages/{username}/{page}')
 def getpassage(username,page):
     query_id_data = {
@@ -95,17 +96,14 @@ def getpassage(username,page):
         url = item['link']
         create_time = item['create_time']
 
-        datas={'aid':aid,'title':title,"url":username + "/" + url,"create_time":create_time}
+        datas={'id': username+'/' + aid, 'title': title, "url":url,"time":create_time,"time_stamp":create_time}
         datalist.append(datas)
         #info = '"{}","{}","{}","{}"'.format(str(item["aid"]), item['title'], item['link'], str(item['create_time']))
 
     with open(str(username) + '_' + str(page) + '.json', 'w', encoding='utf-8') as f:
         json.dump(datalist, f, indent=2, sort_keys=True, ensure_ascii=False)
-<<<<<<< HEAD
     return {'ret': datalist}
-=======
-    return datalist
->>>>>>> 75cb1fa790e063837d3d0e804e5c1eb2dd2942f3
+
 #文章爬取，页数从0开始
 
 
@@ -127,10 +125,10 @@ def getcontent(id, username):
             articlelist=json.load(f)
 
             for item in articlelist:
-                if item['aid']==item['aid']:
+                if item['id']==item['id']:
                     title=item['title']
                     url=item['url']
-                    time=item['create_time']
+                    time=item['time']
        i=i+1
 
     headers = {
@@ -147,34 +145,8 @@ def getcontent(id, username):
     with open(str(id)+'.json','w',encoding='utf-8') as f:
         articledata={'title':title,'author':author,'time':time,'id':id,'content':content}
         json.dump(articledata, f, indent=2, sort_keys=True, ensure_ascii=False)
-<<<<<<< HEAD
+
     return {'ret': articledata}
 
-'''
-def requestarticle(accountName):
-    headers = {
 
-        "User-Agent":  "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0"
-    }
-    with open("app_msg_list_"+str(accountName)+".csv", "r", encoding="utf-8") as f:
-        data = f.readlines()
-    n = len(data)
-    for i in range(n):
-        mes = data[i].strip("\n").split(",")
-        if len(mes) != 4:
-            continue
-        title, url = mes[1:3]
-        if i > 0:
-            r = requests.get(eval(url), cookies=cookies,headers=headers)
-            if r.status_code == 200:
-                text = r.text
-                soup = BeautifulSoup(text)
-                print(soup.get_text(strip=True))
-'''
-
-
-
-=======
-    return articledata
->>>>>>> 75cb1fa790e063837d3d0e804e5c1eb2dd2942f3
 
