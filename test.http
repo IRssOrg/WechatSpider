@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Test your FastAPI endpoints
 ### 作者查询接口
 GET http://127.0.0.1:8001/api/search/author/以沫
@@ -10,3 +11,10 @@ Accept: application/json
 ### 文章查询接口
 GET http://127.0.0.1:8001/api/passage/毕导/http://mp.weixin.qq.com/s?__biz=Mzg2MTg4MDcxMQ==&mid=2247537521&idx=1&sn=fbb2c38abb35ba0f58847c27bea17600&chksm=ce127b99f965f28f1a962f556786971bffcd3114e4711fdcfb498b5f271e0f448bb8ee671281#rd
 Accept: application/json
+=======
+/api/search/author/武汉大学
+
+/api/search/author/武汉大学/0
+
+/api/passage/武汉大学/2655992539_1
+>>>>>>> 75cb1fa790e063837d3d0e804e5c1eb2dd2942f3
