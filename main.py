@@ -60,14 +60,15 @@ def getpassage(username,page):
         'begin': '0',
         'count': '5',
         'query': '',
-        'fakeid': searchforfakeid(username),
+        'fakeid': searchforfakeid(username).get('id'),
         'type': '9'
     }
     appmsg_url = 'https://mp.weixin.qq.com/cgi-bin/appmsg?'
     appmsg_response = requests.get(appmsg_url, cookies=cookies, headers=header, params=query_id_data)
+    print(appmsg_response.json())
     max_num = appmsg_response.json().get('app_msg_cnt')
     num = int(int(max_num) / 5)
-    if page > num:
+    if int(page) > num:
         print('页数超出最大值')
         return -1
     query_id_data = {
@@ -80,7 +81,7 @@ def getpassage(username,page):
         'begin': '{}'.format(str(page*5)),
         'count': '5',
         'query': '',
-        'fakeid': searchforfakeid(username),
+        'fakeid': searchforfakeid(username).get('id'),
         'type': '9'
     }
     print('翻页###################', page)
@@ -100,7 +101,6 @@ def getpassage(username,page):
 
     with open(str(username) + '_' + str(page) + '.json', 'w', encoding='utf-8') as f:
         json.dump(datalist, f, indent=2, sort_keys=True, ensure_ascii=False)
-    time.sleep(2)
     return f
 #文章爬取，页数从0开始
 '''
