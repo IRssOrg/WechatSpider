@@ -48,7 +48,7 @@ def searchforfakeid(username):
         return{'username': username,'id':fakeid}
 
 # 微信公众号的名称就是id，所以此处只返回id
-@wechatCreeper.get('/api/search/author/{username}/{page}')
+@wechatCreeper.get('/api/passages/{username}/{page}')
 def getpassage(username,page):
     query_id_data = {
         'token': gettoken(),
@@ -95,13 +95,13 @@ def getpassage(username,page):
         url = item['link']
         create_time = item['create_time']
 
-        datas={'aid':aid,'title':title,"url":url,"create_time":create_time}
+        datas={'aid':aid,'title':title,"url":username + "/" + url,"create_time":create_time}
         datalist.append(datas)
         #info = '"{}","{}","{}","{}"'.format(str(item["aid"]), item['title'], item['link'], str(item['create_time']))
 
     with open(str(username) + '_' + str(page) + '.json', 'w', encoding='utf-8') as f:
         json.dump(datalist, f, indent=2, sort_keys=True, ensure_ascii=False)
-    return f
+    return {'ret': datalist}
 #文章爬取，页数从0开始
 '''
 def articlespider(accountName):
@@ -189,7 +189,7 @@ def getcontent(url, username):
     with open(str(id)+'.json','w',encoding='utf-8') as f:
         articledata={'title':title,'author':author,'time':time,'id':id,'content':content}
         json.dump(articledata, f, indent=2, sort_keys=True, ensure_ascii=False)
-        return f
+    return {'ret': articledata}
 
 '''
 def requestarticle(accountName):
